@@ -10,13 +10,15 @@ public final class WebServer
 		int port = 6789;
 
 		// Establish the listen socket.
-      			 ?
+      	ServerSocket serverSocket = new ServerSocket(port);
 
 		// Process HTTP service requests in an infinite loop.
 		while (true) {
 			// Listen for a TCP connection request.
-			?
-			. . .
+			Socket clientSocket = serverSocket.accept();
+			
+			HTTPRequestHandler clientWorkerThread = new HTTPRequestHandler(clientSocket);
+			clientWorkerThread.run();
 		}
 	}
 }
