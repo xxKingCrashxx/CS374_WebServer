@@ -16,9 +16,7 @@ public final class WebServer
 		while (true) {
 			// Listen for a TCP connection request.
 			Socket clientSocket = serverSocket.accept();
-			
-			HTTPRequestHandler clientWorkerThread = new HTTPRequestHandler(clientSocket);
-			clientWorkerThread.run();
+			new Thread(new HTTPRequestHandler(clientSocket)).start();
 		}
 	}
 }
