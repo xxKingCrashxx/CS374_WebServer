@@ -10,6 +10,7 @@ public class HTTPMessageResponse {
     private String contentType;
 
     final String CLRF = "\r\n";
+    final String HTTP_VERS = "HTTP/1.0";
 
     /**
      * 
@@ -43,6 +44,9 @@ public class HTTPMessageResponse {
 
     //TODO
     public String generateResponseString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+            .append(HTTP_VERS + " ").append(statusCode + " ").append(statusMessage).append(CLRF).append(CLRF);
         return null;
         
     }

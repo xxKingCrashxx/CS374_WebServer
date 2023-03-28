@@ -42,10 +42,13 @@ public final class HTTPRequestHandler implements Runnable
 		String[] parsedLine = line.split(" ");
 		HTTPMessageRequest request = new HTTPMessageRequest(parsedLine[0], parsedLine[1], parsedLine[2]);
 
+		//printing out HTTP request body headers
 		String headerLine;
 		while((headerLine = bufferedReader.readLine()).length() != 0){
 			System.out.println(headerLine);
 		}
+
+
 
 		
 
