@@ -49,6 +49,7 @@ public final class HTTPRequestHandler implements Runnable
 		while((headerLine = bufferedReader.readLine()).length() != 0){
 			System.out.println(headerLine);
 		}
+		System.out.println();
 
 
 

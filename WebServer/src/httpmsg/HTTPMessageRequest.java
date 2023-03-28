@@ -7,6 +7,7 @@ public class HTTPMessageRequest {
     private String method;
     private String resource;
     private String httpVersion;
+    private String[] httpHeaders;
 
     /**
      * 

@@ -11,7 +11,7 @@ public class HTTPMessageResponse {
     private String contentType;
 
     final String CLRF = "\r\n";
-    final String HTTP_VERS = "HTTP/1.0";
+    final String HTTP_VERS = "HTTP/1.1";
 
     /**
      * 
