@@ -1,3 +1,4 @@
+package httpmsg;
 /***
  * Class representing the basic structure of a http 1.0 message request
  */
