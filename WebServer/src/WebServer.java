@@ -12,13 +12,14 @@ public final class WebServer
 
 		try {
 			serverSocket = new ServerSocket(port);
-			System.out.println("http webserver hosted on port: " + port);
+			System.out.println("http webserver hosted on port: " + port + "\n");
+			
 			// Process HTTP service requests in an infinite loop.
 			while (true) {
 				// Listen for a TCP connection request.
-				System.out.println("waiting for client connection...");
+				System.out.println("waiting for client connection...\n");
 				Socket clientSocket = serverSocket.accept();
-				
+
 				System.out.println("Client:" + clientSocket.getInetAddress().toString() + " connecting on:" + clientSocket.getPort());
 				new Thread(new HTTPRequestHandler(clientSocket)).start();
 			}
@@ -30,5 +31,6 @@ public final class WebServer
 			if(serverSocket != null)
 				serverSocket.close();
 		}
+		System.out.println("closing server...");
 	}
 }

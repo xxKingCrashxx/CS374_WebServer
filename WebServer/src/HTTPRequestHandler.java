@@ -1,14 +1,17 @@
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import httpmsg.HTTPMessageRequest;
+import httputil.HTTPMessageRequest;
+import httputil.HTTPMessageResponse;
 
 public final class HTTPRequestHandler implements Runnable
 {
-    //final static String CRLF = "\r\n";
 	Socket clientSocket;
 
 	// Constructor
@@ -38,10 +41,10 @@ public final class HTTPRequestHandler implements Runnable
 		OutputStream clientOutput = clientSocket.getOutputStream();
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientInput));
 
-		String line = bufferedReader.readLine();
-		System.out.println(line);
+		String requestLine = bufferedReader.readLine();
+		System.out.println(requestLine);
 
-		String[] parsedLine = line.split(" ");
+		String[] parsedLine = requestLine.split(" ");
 		HTTPMessageRequest request = new HTTPMessageRequest(parsedLine[0], parsedLine[1], parsedLine[2]);
 
 		//printing out HTTP request body headers
@@ -50,13 +53,41 @@ public final class HTTPRequestHandler implements Runnable
 			System.out.println(headerLine);
 		}
 		System.out.println();
+		handleMethod(request, bufferedReader, clientOutput);
 
-
-
-		
-
-
-		
+		clientOutput.close();
+		bufferedReader.close();
+		clientSocket.close();
 	}
+	private void handleMethod(HTTPMessageRequest request, BufferedReader reader, OutputStream outputStream) throws IOException{
+		if(request.getMethod().equals("GET")){
+			FileInputStream fis = null;
+			HTTPMessageResponse serverResponse;
+			boolean fileExists = true;
+			byte[] content;
+
+			try 
+			{
+				fis = new FileInputStream(new File("WebServer/webpage"+ request.getResource()));
+			} 
+			catch (Exception e) 
+			{
+				fileExists = false;
+			}
+
+			if(!fileExists)
+			{
+				serverResponse = new HTTPMessageResponse(404, "NOT FOUND", "text/html");
+			}
+			serverResponse = new HTTPMessageResponse(200, "OK", fis.readAllBytes(), getContentType(request.getResource()));
+		}
+	}
+	private HTTPMessageResponse getResource(String resourcePath){
+		return null;
+	}
+	private String getContentType(String resource){
+		return null;
+	}
+
     
 }

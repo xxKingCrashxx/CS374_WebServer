@@ -1,4 +1,4 @@
-package httpmsg;
+package httputil;
 /***
  * Class representing the basic structure of a http 1.0 message request
  */
@@ -7,7 +7,7 @@ public class HTTPMessageRequest {
     private String method;
     private String resource;
     private String httpVersion;
-    private String[] httpHeaders;
+    
 
     /**
      * 
