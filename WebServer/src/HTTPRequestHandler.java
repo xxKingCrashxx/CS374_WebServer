@@ -4,6 +4,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import httpmsg.HTTPMessageRequest;
+
 public final class HTTPRequestHandler implements Runnable
 {
     //final static String CRLF = "\r\n";

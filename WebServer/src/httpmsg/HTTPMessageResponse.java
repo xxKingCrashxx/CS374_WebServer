@@ -46,8 +46,7 @@ public class HTTPMessageResponse {
     //TODO
     public String generateResponseString(){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder
-            .append(HTTP_VERS + " ").append(statusCode + " ").append(statusMessage).append(CLRF).append(CLRF);
+        stringBuilder.append(HTTP_VERS + " " + statusCode + " " + statusMessage).append(CLRF);
         return null;
         
     }
