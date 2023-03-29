@@ -53,40 +53,63 @@ public final class HTTPRequestHandler implements Runnable
 			System.out.println(headerLine);
 		}
 		System.out.println();
-		handleMethod(request, bufferedReader, clientOutput);
+		handleMethod(request, clientOutput);
 
 		clientOutput.close();
 		bufferedReader.close();
 		clientSocket.close();
 	}
-	private void handleMethod(HTTPMessageRequest request, BufferedReader reader, OutputStream outputStream) throws IOException{
+	private void handleMethod(HTTPMessageRequest request, OutputStream out) throws IOException{
 		if(request.getMethod().equals("GET")){
-			FileInputStream fis = null;
-			HTTPMessageResponse serverResponse;
-			boolean fileExists = true;
-			byte[] content;
+			HTTPMessageResponse serverResponse = getResource(request.getResource());
+			String responseMsg = serverResponse.generateResponseString();
+			out.write(responseMsg.getBytes());
 
-			try 
-			{
-				fis = new FileInputStream(new File("WebServer/webpage"+ request.getResource()));
-			} 
-			catch (Exception e) 
-			{
-				fileExists = false;
-			}
-
-			if(!fileExists)
-			{
-				serverResponse = new HTTPMessageResponse(404, "NOT FOUND", "text/html");
-			}
-			serverResponse = new HTTPMessageResponse(200, "OK", fis.readAllBytes(), getContentType(request.getResource()));
 		}
 	}
 	private HTTPMessageResponse getResource(String resourcePath){
-		return null;
+		FileInputStream fis = null;
+		HTTPMessageResponse serverResponse = null;
+
+		File file = new File("WebServer/webpage" + resourcePath);
+		String contentType = getContentType(resourcePath);
+			
+		try{
+
+			if(!file.exists()){
+				return serverResponse = new HTTPMessageResponse(404, "NOT FOUND", contentType);
+			}
+
+			fis = new FileInputStream(file);
+			byte[] content = fis.readAllBytes();
+
+			fis.close();
+			return serverResponse = new HTTPMessageResponse(200, "OK", content, contentType);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return serverResponse = new HTTPMessageResponse(0, resourcePath, contentType);
+		}	
+		
 	}
 	private String getContentType(String resource){
-		return null;
+
+		String[] splitResource = resource.split(".");
+		String contentType = "";
+
+		switch(splitResource[1]){
+			case "htm":	case "html":	
+				contentType = "text/html";
+				break;
+			case "jpg":
+				contentType = "img/jpg";
+				break;
+			default:
+				contentType = "application/octet-stream";
+				break;	
+		}
+		return contentType;
 	}
 
     
