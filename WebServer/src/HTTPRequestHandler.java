@@ -13,6 +13,7 @@ import httputil.HTTPMessageResponse;
 public final class HTTPRequestHandler implements Runnable
 {
 	Socket clientSocket;
+	final String ROOT_DIRECTORY = "WebServer/website";
 
 	// Constructor
 	public HTTPRequestHandler(Socket socket) throws Exception 
@@ -74,13 +75,18 @@ public final class HTTPRequestHandler implements Runnable
 		FileInputStream fis = null;
 		HTTPMessageResponse serverResponse = null;
 
-		File file = new File("WebServer/webpage" + resourcePath);
+		if(!resourcePath.contains(ROOT_DIRECTORY))
+			resourcePath = ROOT_DIRECTORY + resourcePath;
+		
+		File file = new File(resourcePath);
 		String contentType = getContentType(resourcePath);
 			
 		try{
 
 			if(!file.exists()){
+				System.out.println("File does not exist:" + file.getPath());
 				return serverResponse = new HTTPMessageResponse(404, "NOT FOUND", contentType);
+				
 			}
 
 			fis = new FileInputStream(file);
@@ -92,7 +98,8 @@ public final class HTTPRequestHandler implements Runnable
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			return serverResponse = new HTTPMessageResponse(0, resourcePath, contentType);
+			System.out.println("server error:" + file.getPath());
+			return serverResponse = new HTTPMessageResponse(404, "NOT FOUND", contentType);
 		}	
 		
 	}
