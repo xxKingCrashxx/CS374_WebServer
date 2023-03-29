@@ -23,7 +23,6 @@ public final class HTTPRequestHandler implements Runnable
 	// Implement the run() method of the Runnable interface.
 	public void run()
 	{
-		//TODO
 		try 
 		{
 			processRequest();
@@ -36,14 +35,17 @@ public final class HTTPRequestHandler implements Runnable
 
 	private void processRequest() throws Exception
 	{
-		//TODO
+		//getting access to the I/O stream of the client socket
 		InputStream clientInput = clientSocket.getInputStream();
 		OutputStream clientOutput = clientSocket.getOutputStream();
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientInput));
 
+		//getting the request line from the http request message
 		String requestLine = bufferedReader.readLine();
 		System.out.println(requestLine);
 
+		//splitting each individual part of the request line by ' '
+		//creating HTTPMessageRequest object based on data.
 		String[] parsedLine = requestLine.split(" ");
 		HTTPMessageRequest request = new HTTPMessageRequest(parsedLine[0], parsedLine[1], parsedLine[2]);
 
@@ -53,6 +55,7 @@ public final class HTTPRequestHandler implements Runnable
 			System.out.println(headerLine);
 		}
 		System.out.println();
+
 		handleMethod(request, clientOutput);
 
 		clientOutput.close();
@@ -60,11 +63,11 @@ public final class HTTPRequestHandler implements Runnable
 		clientSocket.close();
 	}
 	private void handleMethod(HTTPMessageRequest request, OutputStream out) throws IOException{
+		//Get method case
 		if(request.getMethod().equals("GET")){
 			HTTPMessageResponse serverResponse = getResource(request.getResource());
 			String responseMsg = serverResponse.generateResponseString();
 			out.write(responseMsg.getBytes());
-
 		}
 	}
 	private HTTPMessageResponse getResource(String resourcePath){
@@ -94,21 +97,16 @@ public final class HTTPRequestHandler implements Runnable
 		
 	}
 	private String getContentType(String resource){
-
-		String[] splitResource = resource.split(".");
 		String contentType = "";
 
-		switch(splitResource[1]){
-			case "htm":	case "html":	
-				contentType = "text/html";
-				break;
-			case "jpg":
-				contentType = "img/jpg";
-				break;
-			default:
-				contentType = "application/octet-stream";
-				break;	
-		}
+		if(resource.endsWith(".html") || resource.endsWith(".htm"))
+			contentType = "text/html";
+		else if(resource.endsWith(".jpeg"))
+			contentType = "image/jpeg";
+		else if(resource.endsWith(".gif"))
+			contentType = "image/gif";
+		else
+			contentType = "application/octet-stream";
 		return contentType;
 	}
 
