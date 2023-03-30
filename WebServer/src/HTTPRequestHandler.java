@@ -92,6 +92,7 @@ public final class HTTPRequestHandler implements Runnable
 			out.write(response.getBody());
 			return;
 		}
+		
 		byte[] buffer = new byte[2048];
 		int bytesRead = 0;
 		while((bytesRead = fis.read(buffer)) != -1)
@@ -103,29 +104,27 @@ public final class HTTPRequestHandler implements Runnable
 
 	private void handleGetRequest(HTTPMessageRequest request, DataOutputStream out) throws SecurityException, IOException{
 		String resourcePath = ROOT_DIRECTORY + request.getResource();
-		HTTPMessageResponse response = null;
+
+		HTTPMessageResponse response = new HTTPMessageResponse(404, "NOT FOUND", request.contentType());
+		response.setBody(response.generateBodyString(404, "NOT FOUND", "The webpage you are looking for does not exist."));
 
 		File file = new File(resourcePath);
 
 		try
 		{
 			
-			if(!file.exists() || !file.canRead())
+			if(file.exists() && file.canRead())
 			{
-				System.out.println("File does not exist:" + resourcePath);
-				response = new HTTPMessageResponse(404, "NOT FOUND", request.contentType());
-				response.setBody(response.generateBodyString(404, "NOT FOUND", "The webpage you are looking for does not exist."));
+				response = new HTTPMessageResponse(200, "OK", request.contentType());
 			}
 			else{
-				response = new HTTPMessageResponse(200, "OK", request.contentType());
+				System.out.println("File does not exist.");
 			}
 		}
 		catch(SecurityException se)
 		{
 			//throw new SecurityException();
 			System.out.println("could not read file");
-			response = new HTTPMessageResponse(404, "NOT FOUND", request.contentType());
-			response.setBody(response.generateBodyString(404, "NOT FOUND", "The webpage you are looking for does not exist."));
 		}
 		finally
 		{
