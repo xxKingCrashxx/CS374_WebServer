@@ -41,6 +41,10 @@ public class HTTPMessageRequest {
 			contentType = "image/jpeg";
 		else if(resource.endsWith(".gif"))
 			contentType = "image/gif";
+        else if(resource.endsWith(".ico"))
+            contentType = "image/vnd.microsoft.icon";
+        else if(resource.endsWith(".webm"))
+            contentType = "video/webm";
 		else
 			contentType = "application/octet-stream";
 		return contentType;
