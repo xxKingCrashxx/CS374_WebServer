@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -73,13 +74,28 @@ public final class HTTPRequestHandler implements Runnable
 	}
 	private void writeOutResponse(HTTPMessageResponse response, DataOutputStream out, File file) throws IOException
 	{
-		out.write(response.generateResponseString().getBytes());
+		FileInputStream fis = null;
+		boolean exists = true;
+		try
+		{
+			fis = new FileInputStream(file);
+		}
+		catch(FileNotFoundException exception)
+		{
+			System.out.println("file does not exist");
+			exists = false;	
+		}
 
-		FileInputStream fis = new FileInputStream(file);
+		out.write(response.generateResponseString().getBytes());
+		if(!exists)
+		{
+			out.write(response.getBody());
+			return;
+		}
 		byte[] buffer = new byte[2048];
 		int bytesRead = 0;
-
-		while((bytesRead = fis.read(buffer)) != -1){
+		while((bytesRead = fis.read(buffer)) != -1)
+		{
 			out.write(buffer, 0, bytesRead);
 		}
 		fis.close();
@@ -87,31 +103,33 @@ public final class HTTPRequestHandler implements Runnable
 
 	private void handleGetRequest(HTTPMessageRequest request, DataOutputStream out) throws SecurityException, IOException{
 		String resourcePath = ROOT_DIRECTORY + request.getResource();
-		HTTPMessageResponse response;
+		HTTPMessageResponse response = null;
 
 		File file = new File(resourcePath);
 
 		try
 		{
+			
 			if(!file.exists())
 			{
 				System.out.println("File does not exist:" + resourcePath);
 				response = new HTTPMessageResponse(404, "NOT FOUND", request.contentType());
 				response.setBody(response.generateBodyString(404, "NOT FOUND", "The webpage you are looking for does not exist."));
 			}
-
-			if(!file.canRead())
+			else if(!file.canRead())
 			{
 				System.out.println("file cannot be read:" + resourcePath);
 				response = new HTTPMessageResponse(500, "INTERNAL SERVER ERROR", request.contentType());
 				response.setBody(response.generateBodyString(500, "INTERNAL SERVER ERROR", "Something went wrong"));
+			}
+			else{
+				response = new HTTPMessageResponse(200, "OK", request.contentType());
 			}	
 		}
 		catch(SecurityException se)
 		{
-			throw new SecurityException();
+			//throw new SecurityException();
 		}
-		response = new HTTPMessageResponse(200, "OK", request.contentType());
 		writeOutResponse(response, out, file);
 	}
 }
