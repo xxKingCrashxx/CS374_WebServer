@@ -31,5 +31,19 @@ public class HTTPMessageRequest {
     public String getHttpVersion() {
         return httpVersion;
     }
+
+    public String contentType(){
+        String contentType = "";
+
+		if(resource.endsWith(".html") || resource.endsWith(".htm"))
+			contentType = "text/html";
+		else if(resource.endsWith(".jpeg"))
+			contentType = "image/jpeg";
+		else if(resource.endsWith(".gif"))
+			contentType = "image/gif";
+		else
+			contentType = "application/octet-stream";
+		return contentType;
+    }
     
 }

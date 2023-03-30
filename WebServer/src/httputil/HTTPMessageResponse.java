@@ -21,16 +21,10 @@ public class HTTPMessageResponse {
      * @param body
      * @param contentType
      */
-    public HTTPMessageResponse(int statusCode, String statusMessage, byte[] body, String contentType){
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
-        this.body = body;
-        this.contentType = contentType;
-    }
+    
     public HTTPMessageResponse(int statusCode, String statusMessage, String contentType){
         this.statusCode = statusCode;
         this.statusMessage = statusMessage;
-        this.body = "<html><head><title>ERROR CODE 404</title></head><body><h1>404 NOT FOUND</h1><p>the webpage you are looking for does not exist.</p></body></html>".getBytes();
         this.contentType = contentType;
     }
 
@@ -45,6 +39,12 @@ public class HTTPMessageResponse {
     public byte[] getBody() {
         return body;
     }
+    public void setBody(String htmlMSG){
+        this.body = htmlMSG.getBytes();
+    }
+    public int getBodySize(){
+        return body.length;
+    }
 
     public String getContentType() {
         return contentType;
@@ -56,12 +56,10 @@ public class HTTPMessageResponse {
 
         stringBuilder.append(HTTP_VERS + " " + statusCode + " " + statusMessage).append(CLRF)
             .append("Content-Type: " + contentType).append(CLRF)
-            .append("Content-Length: " + body.length).append(CLRF)
             .append(CLRF);
-        
-        if(body.length > 0){
-            stringBuilder.append(new String(body, StandardCharsets.US_ASCII));
-        }
         return stringBuilder.toString();
+    }
+    public String generateBodyString(int statusCode, String statusMessage, String msg){
+        return "<html><head><title>ERROR CODE "+ statusCode + "</title></head><body><h1>"+statusCode + " " + statusMessage +"</h1><p>" + msg + "</p></body></html>";
     }
 }
