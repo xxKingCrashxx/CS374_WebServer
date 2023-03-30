@@ -110,26 +110,27 @@ public final class HTTPRequestHandler implements Runnable
 		try
 		{
 			
-			if(!file.exists())
+			if(!file.exists() || !file.canRead())
 			{
 				System.out.println("File does not exist:" + resourcePath);
 				response = new HTTPMessageResponse(404, "NOT FOUND", request.contentType());
 				response.setBody(response.generateBodyString(404, "NOT FOUND", "The webpage you are looking for does not exist."));
 			}
-			else if(!file.canRead())
-			{
-				System.out.println("file cannot be read:" + resourcePath);
-				response = new HTTPMessageResponse(500, "INTERNAL SERVER ERROR", request.contentType());
-				response.setBody(response.generateBodyString(500, "INTERNAL SERVER ERROR", "Something went wrong"));
-			}
 			else{
 				response = new HTTPMessageResponse(200, "OK", request.contentType());
-			}	
+			}
 		}
 		catch(SecurityException se)
 		{
 			//throw new SecurityException();
+			System.out.println("could not read file");
+			response = new HTTPMessageResponse(404, "NOT FOUND", request.contentType());
+			response.setBody(response.generateBodyString(404, "NOT FOUND", "The webpage you are looking for does not exist."));
 		}
-		writeOutResponse(response, out, file);
+		finally
+		{
+			writeOutResponse(response, out, file);
+		}
+		
 	}
 }
