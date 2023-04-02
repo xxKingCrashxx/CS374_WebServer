@@ -1,2 +1,4 @@
 WebServer/.vscode/**
 WebServer/bin/**
+WebServer/requestmsg.txt
+WebServer/src/WebServerSettings.txt
